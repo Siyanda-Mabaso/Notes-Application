@@ -1,17 +1,36 @@
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
   View,
   Text,
   TextInput,
   StyleSheet,
   Pressable,
+  Alert,
 } from "react-native";
 import { router } from "expo-router";
+import { AuthContext } from "../context/AuthContext";
 
 export default function LoginScreen() {
+  const { login } = useContext(AuthContext);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter your email and password.");
+      return;
+    }
+
+    const success = await login(email, password);
+
+    if (success) {
+      router.replace("/home");
+    } else {
+      Alert.alert("Login Failed", "Invalid email or password.");
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -38,7 +57,7 @@ export default function LoginScreen() {
         secureTextEntry
       />
 
-      <Pressable style={styles.loginButton}>
+      <Pressable style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginText}>Login</Text>
       </Pressable>
 
