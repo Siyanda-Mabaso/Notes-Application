@@ -6,7 +6,6 @@ import {
   TextInput,
   StyleSheet,
   Pressable,
-  Alert,
 } from "react-native";
 import { router } from "expo-router";
 import { AuthContext } from "../context/AuthContext";
@@ -17,20 +16,22 @@ export default function RegisterScreen() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleRegister = async () => {
+    setErrorMessage("");
+
     if (!username || !email || !password) {
-      Alert.alert("Error", "Please fill in all fields.");
+      setErrorMessage("Please fill in all fields.");
       return;
     }
 
     const success = await register(username, email, password);
 
     if (success) {
-      Alert.alert("Success", "Account created successfully!");
       router.replace("/home");
     } else {
-      Alert.alert("Error", "This email is already registered.");
+      setErrorMessage("This email is already registered.");
     }
   };
 
@@ -41,6 +42,10 @@ export default function RegisterScreen() {
       <Text style={styles.description}>
         Sign up to start organising your notes.
       </Text>
+
+      {errorMessage ? (
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      ) : null}
 
       <TextInput
         style={styles.input}
@@ -66,7 +71,10 @@ export default function RegisterScreen() {
         secureTextEntry
       />
 
-      <Pressable style={styles.registerButton} onPress={handleRegister}>
+      <Pressable
+        style={styles.registerButton}
+        onPress={handleRegister}
+      >
         <Text style={styles.registerText}>Create Account</Text>
       </Pressable>
 
@@ -100,6 +108,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#777387",
     marginBottom: 35,
+  },
+  errorText: {
+    color: "red",
+    marginBottom: 15,
+    fontSize: 14,
   },
   input: {
     backgroundColor: "#FFFFFF",
