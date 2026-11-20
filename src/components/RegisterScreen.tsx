@@ -1,0 +1,135 @@
+
+import { useState, useContext } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Pressable,
+  Alert,
+} from "react-native";
+import { router } from "expo-router";
+import { AuthContext } from "../context/AuthContext";
+
+export default function RegisterScreen() {
+  const { register } = useContext(AuthContext);
+
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleRegister = async () => {
+    if (!username || !email || !password) {
+      Alert.alert("Error", "Please fill in all fields.");
+      return;
+    }
+
+    const success = await register(username, email, password);
+
+    if (success) {
+      Alert.alert("Success", "Account created successfully!");
+      router.replace("/home");
+    } else {
+      Alert.alert("Error", "This email is already registered.");
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Create Account</Text>
+
+      <Text style={styles.description}>
+        Sign up to start organising your notes.
+      </Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Email Address"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+
+      <Pressable style={styles.registerButton} onPress={handleRegister}>
+        <Text style={styles.registerText}>Create Account</Text>
+      </Pressable>
+
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>
+          Already have an account?
+        </Text>
+
+        <Pressable onPress={() => router.push("/login")}>
+          <Text style={styles.loginText}> Login</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F7F5FF",
+    justifyContent: "center",
+    paddingHorizontal: 28,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: "bold",
+    color: "#252238",
+    marginBottom: 10,
+  },
+  description: {
+    fontSize: 16,
+    color: "#777387",
+    marginBottom: 35,
+  },
+  input: {
+    backgroundColor: "#FFFFFF",
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 18,
+    fontSize: 15,
+  },
+  registerButton: {
+    backgroundColor: "#7056D8",
+    padding: 17,
+    borderRadius: 14,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  registerText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 25,
+  },
+  footerText: {
+    color: "#777387",
+  },
+  loginText: {
+    color: "#7056D8",
+    fontWeight: "bold",
+  },
+});
